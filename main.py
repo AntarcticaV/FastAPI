@@ -6,6 +6,10 @@ import uvicorn
 from core.router import set_routers
 from core import setting
 
+from prisma import Prisma
+from prisma.models import Product
+import asyncio
+
 
 app = FastAPI(title= "Learn FastAPI")
 
@@ -21,4 +25,14 @@ async def shutdown():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=setting.POST, host=setting.HOST, reload=True)
+    # uvicorn.run("main:app", port=setting.POST, host=setting.HOST, reload=True)
+    pass
+
+async def main():
+    db = Prisma()
+    await db.connect()
+    print(await db.product.find_first(where={"id": 1}))
+    products = await db.product.find_many()
+    await db.disconnect()
+    
+asyncio.run(main())
